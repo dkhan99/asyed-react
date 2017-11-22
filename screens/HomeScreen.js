@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { WebBrowser } from 'expo';
+import { WebBrowser, Constants, Location, Permissions } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 
@@ -17,7 +17,49 @@ export default class HomeScreen extends React.Component {
     header: null,
   };
 
+  state = {
+    location: null,
+    errorMessage: null,
+  };
+
+  componentWillMount() {
+    if (Platform.OS === 'android' && !Constants.isDevice) {
+      this.setState({
+        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
+      });
+    } else {
+      this._getLocationAsync();
+    }
+  }
+
+
+  _getLocationAsync = async () => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      this.setState({
+        errorMessage: 'Permission to access location was denied',
+      });
+    }
+
+
+    const getLocation = (location) => {
+        this.setState({ location });
+    }
+
+    let location = await Location.watchHeadingAsync(getLocation);
+     
+
+  };
+
   render() {
+
+    let text = 'Waiting..';
+    if (this.state.errorMessage) {
+      text = this.state.errorMessage;
+    } else if (this.state.location) {
+      text = JSON.stringify(this.state.location);
+    }
+
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -32,7 +74,7 @@ export default class HomeScreen extends React.Component {
             {this._maybeRenderDevelopmentModeWarning()}
             
             <Text style={styles.getStartedText}>
-              The Compass showing direction towards Makkah should be here
+              {text}
             </Text>
             <Text onPress={this._googleQiblaFinder} style={styles.helpLinkText}>
               Try this to use the google qiblah finder
@@ -62,8 +104,7 @@ export default class HomeScreen extends React.Component {
 
       return (
         <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
+          Development mode is enabled {learnMoreButton}
         </Text>
       );
     } else {
