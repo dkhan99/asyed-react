@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
   Image,
   Platform,
@@ -6,59 +6,56 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableHighlight,
   View,
 } from 'react-native';
+import Button from "./button";
+import buttonStyles from "./buttonStyles"
 import { WebBrowser, Constants, Location, Permissions } from 'expo';
-
+import TimingsScreen from "./TimingsScreen"
 import { MonoText } from '../components/StyledText';
 
-export default class HomeScreen extends React.Component {
+const style = { backgroundColor: "#DDDDDD"}
+
+class HomeScreen extends Component {
   static navigationOptions = {
     header: null,
   };
-
-  state = {
-    location: null,
-    errorMessage: null,
-  };
-
-  componentWillMount() {
-    if (Platform.OS === 'android' && !Constants.isDevice) {
-      this.setState({
-        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
-      });
-    } else {
-      this._getLocationAsync();
-    }
+  constructor(props) {
+    super(props);
+  
+    this.state = {
+      latitude: null,
+      longitude: null,
+      error: null,
+    };
+  }
+  componentDidMount() {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.setState ({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          error: null,
+        });
+      },  
+      (error) => this.setState({ error: error.message}),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    );
   }
 
 
-  _getLocationAsync = async () => {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
-      this.setState({
-        errorMessage: 'Permission to access location was denied',
-      });
-    }
 
 
-    const getLocation = (location) => {
-        this.setState({ location });
-    }
-
-    let location = await Location.watchHeadingAsync(getLocation);
-     
-
-  };
 
   render() {
 
-    let text = 'Waiting..';
-    if (this.state.errorMessage) {
-      text = this.state.errorMessage;
-    } else if (this.state.location) {
-      text = JSON.stringify(this.state.location);
-    }
+    // let text = 'Waiting..';
+    // if (this.state.errorMessage) {
+    //   text = this.state.errorMessage;
+    // } else if (this.state.location) {
+    //   text = JSON.stringify(this.state.location);
+    // }
 
     return (
       <View style={styles.container}>
@@ -73,9 +70,12 @@ export default class HomeScreen extends React.Component {
           <View style={styles.getStartedContainer}>
             {this._maybeRenderDevelopmentModeWarning()}
             
-            <Text style={styles.getStartedText}>
-              {text}
-            </Text>
+
+      <View style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Latitude: {this.state.latitude}</Text>
+        <Text>Longitude: {this.state.longitude}</Text>
+        {this.state.error ? <Text>Error: {this.state.error}</Text> : null}
+      </View>
             <Text onPress={this._googleQiblaFinder} style={styles.helpLinkText}>
               Try this to use the google qiblah finder
             </Text>
@@ -219,3 +219,5 @@ const styles = StyleSheet.create({
     color: '#2e78b7',
   },
 });
+
+export default HomeScreen;
