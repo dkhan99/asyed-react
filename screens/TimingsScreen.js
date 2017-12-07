@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
   Image,
   Platform,
@@ -12,7 +12,7 @@ import {
 import { Constants, Location, Permissions } from 'expo';
 
 
-export default class TimingsScreen extends React.Component {
+class TimingsScreen extends Component {
   state = {
     location: null,
     errorMessage: null,
@@ -253,3 +253,5 @@ const styles = StyleSheet.create({
     color: '#2e78b7',
   },
 });
+
+export default TimingsScreen;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
   Image,
   Platform,
@@ -6,59 +6,142 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableHighlight,
+  AsyncStorage,
   View,
 } from 'react-native';
-import { WebBrowser, Constants, Location, Permissions } from 'expo';
-
+import LocationButton from "./LocationButton";
+// import buttonStyles from "./buttonStyles"
+import { WebBrowser, Constants, Location, Accelerometer, Gyroscope, Permissions } from 'expo';
+import TimingsScreen from "./TimingsScreen"
 import { MonoText } from '../components/StyledText';
 
-export default class HomeScreen extends React.Component {
+const STORAGE_KEY = "@Asyed:location";
+// import { Accelerometer, Gyroscope } from 'react-native-sensors';
+// import { decorator as sensors } from 'react-native-sensors';
+// import RNSensors from 'react-native-sensors';
+
+// const { Accelerometer, Gyroscope } = RNSensors;
+// const accelerationObservable = new Accelerometer({
+//   updateInterval: 100, // defaults to 100ms
+// });
+
+// const gyroscopeObservable = new Gyroscope({
+//   updateInterval: 2000, // defaults to 100ms
+// });
+
+const style = { backgroundColor: "#DDDDDD"}
+
+class HomeScreen extends Component {
   static navigationOptions = {
     header: null,
   };
+  constructor(props) {
+    super(props);
+  
+    this.state = {
 
-  state = {
-    location: null,
-    errorMessage: null,
+        latitude: null,
+        longitude: null,
+        error: null,
+      };
+
+      // gyroscope: {
+      //   x: 'unknown',
+      //   y: 'unknown',
+      //   z: 'unknown', 
+
+  }
+  componentDidMount() {
+    AsyncStorage
+      .getItem(STORAGE_KEY)
+      .then(value => {
+        if (value !== null) {
+          this._getLocation(value);
+        }
+      })
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done();
+  } 
+    _getLocation = location => {
+
+        AsyncStorage
+          .setItem( STORAGE_KEY, location )
+          .then(() => console.log("Saved selection to disk: " + location))
+          .catch(error =>
+            console.error("AsyncStorage error: " + error.message))
+          .done();
+
+      LocationButton._onPress().navigator.geolocation.getCurrentPosition(
+      initialPosition => {
+        this.props.onGetCoords(
+          initialPosition.coords.latitude, 
+          initialPosition.coords.longitude
+        );
+      },
+      error => {
+        alert(error.message);
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    );  
+
+        
+        //   console.log("lat", lat);
+      //   LocationButton.onGetCoords.then(lat => {
+      //   this.setState ({
+      //     latitude: position.coords.latitude,
+      //     longitude: position.coords.longitude,
+      //     error: null,
+      //   });
+      // },  
+
+    // );
+        // });
+      // (error) => this.setState({ error: error.message}),
+      // { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+  
+    this._toggle();
+
   };
+  componentWillUnmount() {
+    this._unsubscribe();
+  }
 
-  componentWillMount() {
-    if (Platform.OS === 'android' && !Constants.isDevice) {
-      this.setState({
-        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
-      });
+  _toggle = () => {
+    if (this._subscription) {
+      this._unsubscribe();
     } else {
-      this._getLocationAsync();
+      this._subscribe();
     }
   }
 
+  // _slow = () => {
+  //   Accelerometer.setUpdateInterval(1000); 
+  // }
 
-  _getLocationAsync = async () => {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
-      this.setState({
-        errorMessage: 'Permission to access location was denied',
-      });
-    }
+  // _fast = () => {
+  //   Accelerometer.setUpdateInterval(16);
+  // }
 
+  // _subscribe = () => {
+  //   this._subscription = Accelerometer.addListener(accelerometerData => {
+  //     this.setState({ accelerometerData });
+  //   });
+  // }
 
-    const getLocation = (location) => {
-        this.setState({ location });
-    }
-
-    let location = await Location.watchHeadingAsync(getLocation);
-     
-
-  };
-
+  _unsubscribe = () => {
+    this._subscription && this._subscription.remove();
+    this._subscription = null;
+  }
   render() {
-
-    let text = 'Waiting..';
-    if (this.state.errorMessage) {
-      text = this.state.errorMessage;
-    } else if (this.state.location) {
-      text = JSON.stringify(this.state.location);
-    }
+    // let { x, y, z } = this.state.accelerometerData;
+    // let text = 'Waiting..';
+    // if (this.state.errorMessage) {
+    //   text = this.state.errorMessage;
+    // } else if (this.state.location) {
+    //   text = JSON.stringify(this.state.location);
+    // }
 
     return (
       <View style={styles.container}>
@@ -73,12 +156,17 @@ export default class HomeScreen extends React.Component {
           <View style={styles.getStartedContainer}>
             {this._maybeRenderDevelopmentModeWarning()}
             
-            <Text style={styles.getStartedText}>
-              {text}
-            </Text>
-            <Text onPress={this._googleQiblaFinder} style={styles.helpLinkText}>
-              Try this to use the google qiblah finder
-            </Text>
+
+      <View style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Latitude: {this.state.latitude}</Text>
+        <Text>Longitude: {this.state.longitude}</Text>
+        {this.state.error ? <Text>Error: {this.state.error}</Text> : null}
+      </View>
+            <View style = { styles.row }>
+              <LocationButton
+                onGetCoords= { this._getLocation } 
+              />
+            </View>  
           </View>
 
         </ScrollView>
@@ -165,6 +253,13 @@ const styles = StyleSheet.create({
   homeScreenFilename: {
     marginVertical: 7,
   },
+    row: {
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 24
+  },
   codeHighlightText: {
     color: 'rgba(96,100,109, 0.8)',
   },
@@ -218,4 +313,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2e78b7',
   },
+    instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
 });
+
+export default HomeScreen;
