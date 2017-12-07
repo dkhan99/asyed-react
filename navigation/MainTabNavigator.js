@@ -9,6 +9,7 @@ import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import TimingsScreen from '../screens/TimingsScreen';
+import location_practice from '../screens/location_practice';
 
 export default TabNavigator(
   {
@@ -47,6 +48,9 @@ export default TabNavigator(
             iconName = Platform.OS === 'ios' ? `ios-link${focused ? '' : '-outline'}` : 'md-information-circle';
             break;
           case 'Settings':
+            iconName =
+              Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-settings';
+          case 'location_practice':
             iconName =
               Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-settings';
         }

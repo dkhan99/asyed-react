@@ -7,13 +7,28 @@ import {
   Text,
   TouchableOpacity,
   TouchableHighlight,
+  AsyncStorage,
   View,
 } from 'react-native';
-import Button from "./button";
-import buttonStyles from "./buttonStyles"
-import { WebBrowser, Constants, Location, Permissions } from 'expo';
+import LocationButton from "./LocationButton";
+// import buttonStyles from "./buttonStyles"
+import { WebBrowser, Constants, Location, Accelerometer, Gyroscope, Permissions } from 'expo';
 import TimingsScreen from "./TimingsScreen"
 import { MonoText } from '../components/StyledText';
+
+const STORAGE_KEY = "@Asyed:location";
+// import { Accelerometer, Gyroscope } from 'react-native-sensors';
+// import { decorator as sensors } from 'react-native-sensors';
+// import RNSensors from 'react-native-sensors';
+
+// const { Accelerometer, Gyroscope } = RNSensors;
+// const accelerationObservable = new Accelerometer({
+//   updateInterval: 100, // defaults to 100ms
+// });
+
+// const gyroscopeObservable = new Gyroscope({
+//   updateInterval: 2000, // defaults to 100ms
+// });
 
 const style = { backgroundColor: "#DDDDDD"}
 
@@ -25,31 +40,102 @@ class HomeScreen extends Component {
     super(props);
   
     this.state = {
-      latitude: null,
-      longitude: null,
-      error: null,
-    };
+
+        latitude: null,
+        longitude: null,
+        error: null,
+      };
+
+      // gyroscope: {
+      //   x: 'unknown',
+      //   y: 'unknown',
+      //   z: 'unknown', 
+
   }
   componentDidMount() {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        this.setState ({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          error: null,
-        });
-      },  
-      (error) => this.setState({ error: error.message}),
+    AsyncStorage
+      .getItem(STORAGE_KEY)
+      .then(value => {
+        if (value !== null) {
+          this._getLocation(value);
+        }
+      })
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done();
+  } 
+    _getLocation = location => {
+
+        AsyncStorage
+          .setItem( STORAGE_KEY, location )
+          .then(() => console.log("Saved selection to disk: " + location))
+          .catch(error =>
+            console.error("AsyncStorage error: " + error.message))
+          .done();
+
+      LocationButton._onPress().navigator.geolocation.getCurrentPosition(
+      initialPosition => {
+        this.props.onGetCoords(
+          initialPosition.coords.latitude, 
+          initialPosition.coords.longitude
+        );
+      },
+      error => {
+        alert(error.message);
+      },
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    );
+    );  
+
+        
+        //   console.log("lat", lat);
+      //   LocationButton.onGetCoords.then(lat => {
+      //   this.setState ({
+      //     latitude: position.coords.latitude,
+      //     longitude: position.coords.longitude,
+      //     error: null,
+      //   });
+      // },  
+
+    // );
+        // });
+      // (error) => this.setState({ error: error.message}),
+      // { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+  
+    this._toggle();
+
+  };
+  componentWillUnmount() {
+    this._unsubscribe();
   }
 
+  _toggle = () => {
+    if (this._subscription) {
+      this._unsubscribe();
+    } else {
+      this._subscribe();
+    }
+  }
 
+  // _slow = () => {
+  //   Accelerometer.setUpdateInterval(1000); 
+  // }
 
+  // _fast = () => {
+  //   Accelerometer.setUpdateInterval(16);
+  // }
 
+  // _subscribe = () => {
+  //   this._subscription = Accelerometer.addListener(accelerometerData => {
+  //     this.setState({ accelerometerData });
+  //   });
+  // }
 
+  _unsubscribe = () => {
+    this._subscription && this._subscription.remove();
+    this._subscription = null;
+  }
   render() {
-
+    // let { x, y, z } = this.state.accelerometerData;
     // let text = 'Waiting..';
     // if (this.state.errorMessage) {
     //   text = this.state.errorMessage;
@@ -76,9 +162,11 @@ class HomeScreen extends Component {
         <Text>Longitude: {this.state.longitude}</Text>
         {this.state.error ? <Text>Error: {this.state.error}</Text> : null}
       </View>
-            <Text onPress={this._googleQiblaFinder} style={styles.helpLinkText}>
-              Try this to use the google qiblah finder
-            </Text>
+            <View style = { styles.row }>
+              <LocationButton
+                onGetCoords= { this._getLocation } 
+              />
+            </View>  
           </View>
 
         </ScrollView>
@@ -165,6 +253,13 @@ const styles = StyleSheet.create({
   homeScreenFilename: {
     marginVertical: 7,
   },
+    row: {
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 24
+  },
   codeHighlightText: {
     color: 'rgba(96,100,109, 0.8)',
   },
@@ -217,6 +312,11 @@ const styles = StyleSheet.create({
   helpLinkText: {
     fontSize: 14,
     color: '#2e78b7',
+  },
+    instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
   },
 });
 
