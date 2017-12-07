@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  AsyncStorage,
   View,
 } from 'react-native';
 
@@ -108,10 +109,25 @@ export default class TimingsScreen extends React.Component {
 	 //      let lat = JSON.stringify(this.state.location.coords.latitude);
 	 //    }
 
-		let long = JSON.stringify(this.state.location.coords.longitude);
-	    let lat = JSON.stringify(this.state.location.coords.latitude);
-	    
-    	const timings = this.state.timings
+      const timings = this.state.timings
+
+      let long = JSON.stringify(this.state.location.coords.longitude);
+      let lat = JSON.stringify(this.state.location.coords.latitude);
+
+      AsyncStorage
+        .setItem( "longitude", long )
+
+        .then(() => console.log("Saved selection to disk: " + long))
+        .catch(error =>
+          console.error("AsyncStorage error: " + error.message))
+        .done();
+
+        AsyncStorage
+          .setItem( "latitude", lat )
+          .then(() => console.log("Saved selection to disk: " + lat))
+          .catch(error =>
+            console.error("AsyncStorage error: " + error.message))
+          .done();
 
 	    return (
 	      <View style={styles.container}>

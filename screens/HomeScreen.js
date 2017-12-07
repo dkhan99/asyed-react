@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  AsyncStorage,
   View,
 } from 'react-native';
 import { WebBrowser, Constants, Location, Permissions } from 'expo';
@@ -31,6 +32,30 @@ export default class HomeScreen extends React.Component {
       this._getLocationAsync();
     }
   }
+
+  componentDidMount() {
+    AsyncStorage
+      .getItem("longitude")
+      .then(value => {
+        if (value !== null) {
+          this.setState({ longitude: value})
+        }
+      })
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done();
+    
+    AsyncStorage
+      .getItem("latitude")
+      .then(value => {
+        if (value !== null) {
+          this.setState({ latitude: value})
+        }
+      })
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done();
+  } 
 
 
   _getLocationAsync = async () => {
@@ -76,11 +101,16 @@ export default class HomeScreen extends React.Component {
             <Text style={styles.getStartedText}>
               {text}
             </Text>
+
             <Text onPress={this._googleQiblaFinder} style={styles.helpLinkText}>
               Try this to use the google qiblah finder
             </Text>
           </View>
-
+          <View style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <Text>Latitude: {this.state.latitude}</Text>
+            <Text>Longitude: {this.state.longitude}</Text>
+            {this.state.error ? <Text>Error: {this.state.error}</Text> : null}
+          </View>
         </ScrollView>
 
         <View style={styles.tabBarInfoContainer}>
