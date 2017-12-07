@@ -58,6 +58,7 @@ export default class HomeScreen extends React.Component {
   } 
 
 
+
   _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== 'granted') {
@@ -72,7 +73,7 @@ export default class HomeScreen extends React.Component {
     }
 
     let location = await Location.watchHeadingAsync(getLocation);
-     
+
 
   };
 
@@ -83,6 +84,19 @@ export default class HomeScreen extends React.Component {
       text = this.state.errorMessage;
     } else if (this.state.location) {
       text = JSON.stringify(this.state.location);
+
+console.log("------------------------------")
+let lat1 = this.state.latitude
+let long1 = this.state.longitude
+let lat2 = 21.422487
+let long2 = 39.826206
+var y = Math.sin(lat2-lat1) * Math.cos(long2);
+var x = Math.cos(long1)*Math.sin(long2) -
+        Math.sin(long1)*Math.cos(long2)*Math.cos(lat2-lat1);
+var brng = Math.atan2(y, x)*(  180 / Math.PI);
+var final = (brng + 180 ) % 360
+console.log("------------------------------", final)
+
     }
 
     return (
