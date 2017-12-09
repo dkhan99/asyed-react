@@ -1,6 +1,8 @@
 import React from 'react';
 import {
   Image,
+  Animated,
+  Easing,
   Platform,
   ScrollView,
   StyleSheet,
@@ -13,16 +15,31 @@ import { WebBrowser, Constants, Location, Permissions } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 
+// const spin = this.state.spinValue.interpolate({
+//   inputRange: [0, 1],
+//   outputRange: ['0deg', '360deg']
+// })
+
+
+
+
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
-
-  state = {
+constructor(props) {
+  super(props);
+  this.spinValue = new Animated.Value(0)
+  this.state = {
     location: null,
     errorMessage: null,
+    spinValue: new Animated.Value(0),
   };
+}
+  state = {
 
+  };
+// this.spinValue = new Animated.Value(0);
   componentWillMount() {
     if (Platform.OS === 'android' && !Constants.isDevice) {
       this.setState({
@@ -34,6 +51,8 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
+      
+  this.spin()
     AsyncStorage
       .getItem("longitude")
       .then(value => {
@@ -55,7 +74,23 @@ export default class HomeScreen extends React.Component {
       .catch(error =>
         console.error("AsyncStorage error: " + error.message))
       .done();
+
+
+
+      
   } 
+  
+spin () {
+  this.spinValue.setValue(0)
+  Animated.timing(
+    this.spinValue,
+    {
+      toValue: 1,
+      duration: 4000,
+      easing: Easing.linear
+    }
+  ).start(() => this.spin())
+}
 
 
 
@@ -78,7 +113,7 @@ export default class HomeScreen extends React.Component {
   };
 
   render() {
-
+const spin = this.spinValue.interpolate({inputRange: [0, 1], outputRange: ['0deg', '360deg'], useNativeDriver: true});
     let text = 'Waiting..';
     if (this.state.errorMessage) {
       text = this.state.errorMessage;
@@ -95,7 +130,8 @@ var x = Math.cos(long1)*Math.sin(long2) -
         Math.sin(long1)*Math.cos(long2)*Math.cos(lat2-lat1);
 var brng = Math.atan2(y, x)*(  180 / Math.PI);
 var final = (brng + 180 ) % 360
-console.log("------------------------------", final)
+console.log("------------------------------", final);
+
 
     }
 
@@ -103,9 +139,9 @@ console.log("------------------------------", final)
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
           <View style={styles.welcomeContainer}>
-            <Image
-              source={require('../assets/images/compass.png')
-              }
+            <Animated.Image
+              style = {{transform: [{rotate: spin}] }}
+              source={require('../assets/images/compass.png')}
             />
           </View>
 
