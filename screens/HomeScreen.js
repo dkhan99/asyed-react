@@ -124,19 +124,16 @@ const spinner = this.spinValue.interpolate({inputRange: [0, 1], outputRange: ['0
       text = JSON.stringify(this.state.location);
 
 // console.log("------------------------------", spinner)
-let lat1 = this.state.latitude
-let long1 = this.state.longitude
-let lat2 = 21.422487
-let long2 = 39.826206
-var y = Math.sin(lat2-lat1) * Math.cos(long2);
-var x = Math.cos(long1)*Math.sin(long2) -
-        Math.sin(long1)*Math.cos(long2)*Math.cos(lat2-lat1);
-var brng = Math.atan2(y, x)*(  180 / Math.PI);
-var final = (brng + 180 ) % 360;
-   // pointer = final + "deg";
+let lat1 = this.state.latitude * (Math.PI/180)
+let long1 = this.state.longitude * (Math.PI/180)
+let lat2 = 21.422487 * (Math.PI/180)
+let long2 = 39.826206 * (Math.PI/180)
+var y = Math.sin(long2-long1) * Math.cos(lat2);
+var x = Math.cos(lat1)*Math.sin(lat2) -
+        Math.sin(lat1)*Math.cos(lat2)*Math.cos(long2-long1);
+var brng = (Math.atan2(y, x))*(  180 / Math.PI);
+var final = (brng + 360 ) % 360;
    pointer = -this.state.location.trueHeading + final + "deg";
-console.log("------------------------------", -this.state.location.trueHeading + final);
-console.log("------------------------------", pointer);
 
 
     }
