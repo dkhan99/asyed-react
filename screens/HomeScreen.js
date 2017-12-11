@@ -113,14 +113,17 @@ spin () {
   };
 
   render() {
-const spin = this.spinValue.interpolate({inputRange: [0, 1], outputRange: ['0deg', '360deg'], useNativeDriver: true});
+const spinner = this.spinValue.interpolate({inputRange: [0, 1], outputRange: ['0deg', '360deg'], useNativeDriver: true});
     let text = 'Waiting..';
+    let pointer = "0deg"
+
+// console.log("------------------------------", this.state.location.trueHeading)
     if (this.state.errorMessage) {
       text = this.state.errorMessage;
     } else if (this.state.location) {
       text = JSON.stringify(this.state.location);
 
-console.log("------------------------------")
+// console.log("------------------------------", spinner)
 let lat1 = this.state.latitude
 let long1 = this.state.longitude
 let lat2 = 21.422487
@@ -129,8 +132,11 @@ var y = Math.sin(lat2-lat1) * Math.cos(long2);
 var x = Math.cos(long1)*Math.sin(long2) -
         Math.sin(long1)*Math.cos(long2)*Math.cos(lat2-lat1);
 var brng = Math.atan2(y, x)*(  180 / Math.PI);
-var final = (brng + 180 ) % 360
-console.log("------------------------------", final);
+var final = (brng + 180 ) % 360;
+   // pointer = final + "deg";
+   pointer = -this.state.location.trueHeading + final + "deg";
+console.log("------------------------------", -this.state.location.trueHeading + final);
+console.log("------------------------------", pointer);
 
 
     }
@@ -140,7 +146,7 @@ console.log("------------------------------", final);
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
           <View style={styles.welcomeContainer}>
             <Animated.Image
-              style = {{transform: [{rotate: spin}] }}
+              style = {{transform: [{rotate: pointer}] }}
               source={require('../assets/images/compass.png')}
             />
           </View>
