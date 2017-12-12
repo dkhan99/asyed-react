@@ -144,12 +144,11 @@ var final = (brng + 360 ) % 360;
           <View style={styles.welcomeContainer}>
             <Animated.Image
               style = {{transform: [{rotate: pointer}] }}
-              source={require('../assets/images/compass.png')}
+              source={require('../assets/images/pointer.png')}
             />
           </View>
 
           <View style={styles.getStartedContainer}>
-            {this._maybeRenderDevelopmentModeWarning()}
             
             <Text style={styles.getStartedText}>
               {text}
