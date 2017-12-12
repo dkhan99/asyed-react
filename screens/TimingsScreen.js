@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 
-import { Constants, Location, Permissions } from 'expo';
+import { Constants, Location, Notifications, Permissions } from 'expo';
 
 
 export default class TimingsScreen extends React.Component {
@@ -36,6 +36,19 @@ export default class TimingsScreen extends React.Component {
         errorMessage: 'Permission to access location was denied',
       });
     }
+    let result = await   
+    Permissions.askAsync(Permissions.NOTIFICATIONS);
+    if (Constants.lisDevice && result.status === 'granted') {
+    console.log('Notification permissions granted.')}
+
+// let t = new Date();
+// t.setSeconds(t.getSeconds() + 10);
+const schedulingOptions = {
+    time: (new Date()).getTime() + 1000, // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
+    repeat: "minute"
+  };
+  let localNotification = {title: "you are AWESOME", body: "this is lit"};
+Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions);
 
     let location = await Location.getCurrentPositionAsync({});
     this.setState({ location });
