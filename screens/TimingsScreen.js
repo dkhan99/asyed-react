@@ -53,11 +53,14 @@ export default class TimingsScreen extends React.Component {
       .then((response) => response.json())
       .then((responseData) => {
       	// (hours + 11)%12 +1   to convert 24 hr to 12 hr
+
+        responseData.data.timings["teset"] = "11:55"
+        
       	for (var salah in responseData.data.timings) {
           
    // Moved the notification scheduling here 
           let datePrayer = new Date(responseData.data.date.readable + " "+ responseData.data.timings[salah]).getTime()
-          console.log("the reseponse data", datePrayer )
+          console.log("the reseponse data", salah, datePrayer )
           if (datePrayer > Date.now()){
               let schedulingOptions = {
                 time: datePrayer, // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
@@ -66,7 +69,7 @@ export default class TimingsScreen extends React.Component {
               };
 
               let localNotification = {
-                title: "time for " + salah, 
+                title: "Time for " + salah, 
                 body: salah + " is at " + responseData.data.timings[salah],
                 ios:{sound:true},
                 android:{sound:true, priority: 'max'}
