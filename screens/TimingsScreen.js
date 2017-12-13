@@ -36,19 +36,14 @@ export default class TimingsScreen extends React.Component {
         errorMessage: 'Permission to access location was denied',
       });
     }
-    let result = await   
-    Permissions.askAsync(Permissions.NOTIFICATIONS);
+    let result = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    if (result.status !== 'granted') {
+      this.setState({
+        errorMessage: 'Permission to send push notification was denied',
+      });
+    }
     if (Constants.lisDevice && result.status === 'granted') {
     console.log('Notification permissions granted.')}
-
-// let t = new Date();
-// t.setSeconds(t.getSeconds() + 10);
-const schedulingOptions = {
-    time: (new Date()).getTime() + 1000, // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
-    repeat: "minute"
-  };
-  let localNotification = {title: "you are AWESOME", body: "this is lit"};
-Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions);
 
     let location = await Location.getCurrentPositionAsync({});
     this.setState({ location });
@@ -59,6 +54,28 @@ Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOption
       .then((responseData) => {
       	// (hours + 11)%12 +1   to convert 24 hr to 12 hr
       	for (var salah in responseData.data.timings) {
+          
+   // Moved the notification scheduling here 
+          let datePrayer = new Date(responseData.data.date.readable + " "+ responseData.data.timings[salah]).getTime()
+          console.log("the reseponse data", datePrayer )
+          if (datePrayer > Date.now()){
+              let schedulingOptions = {
+                time: datePrayer, // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
+                // time: 1513120980000, // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
+                // repeat: "minute"
+              };
+
+              let localNotification = {
+                title: "time for " + salah, 
+                body: salah + " is at " + responseData.data.timings[salah],
+                ios:{sound:true},
+                android:{sound:true, priority: 'max'}
+
+              };
+              Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions);
+          }
+
+          // console.log(salah)
       		let stdTime = String((Number(responseData.data.timings[salah].split(':')[0])+ 11) %12 +1);
       		let stdTimeArr = responseData.data.timings[salah].split(':')
       		stdTimeArr[0] = stdTime;
