@@ -134,6 +134,7 @@ var x = Math.cos(lat1)*Math.sin(lat2) -
 var brng = (Math.atan2(y, x))*(  180 / Math.PI);
 var final = (brng + 360 ) % 360;
    pointer = -this.state.location.trueHeading + final + "deg";
+   // pointer = -this.state.location.magHeading + final + "deg";
 
 
     }
