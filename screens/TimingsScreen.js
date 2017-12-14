@@ -54,7 +54,7 @@ export default class TimingsScreen extends React.Component {
       .then((responseData) => {
       	// (hours + 11)%12 +1   to convert 24 hr to 12 hr
 
-        responseData.data.timings["teset"] = "11:55"
+        responseData.data.timings["teset"] = "1:39 pm"
         
       	for (var salah in responseData.data.timings) {
           
@@ -71,6 +71,7 @@ export default class TimingsScreen extends React.Component {
               let localNotification = {
                 title: "Time for " + salah, 
                 body: salah + " is at " + responseData.data.timings[salah],
+                // sound: "./adhanMakkah.wav",
                 ios:{sound:true},
                 android:{sound:true, priority: 'max'}
 
