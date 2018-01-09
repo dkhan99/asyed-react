@@ -54,8 +54,9 @@ export default class TimingsScreen extends React.Component {
       .then((responseData) => {
       	// (hours + 11)%12 +1   to convert 24 hr to 12 hr
 
-        responseData.data.timings["teset"] = "1:39 pm"
-        
+        responseData.data.timings["teset"] = "1:39 pm";
+        Notifications.cancelAllScheduledNotificationsAsync();
+
       	for (var salah in responseData.data.timings) {
           
    // Moved the notification scheduling here 

@@ -16,17 +16,17 @@ import SwitchExample from "./switch";
 
 export default class SettingsScreen extends React.Component {
   static navigationOptions = {
-    title: 'app.json',
+    title: 'Settings',
   };
   constructor(props) {
     super(props);
   
     this.state = {
-    	switch1Value: false,
-    	switch2Value: false,
-    	switch3Value: false,
-    	switch4Value: false,
-    	switch5Value: false,
+    	switch1Value: true,
+    	switch2Value: true,
+    	switch3Value: true,
+    	switch4Value: true,
+    	switch5Value: true,
     };
   }
 
@@ -37,22 +37,22 @@ export default class SettingsScreen extends React.Component {
    
   toggleSwitch2 = (value) => {
     this.setState({switch2Value: value})
-    console.log('Switch 2 is: ' + value)
+    console.log('Duhr is: ' + value)
   };
 
   toggleSwitch3 = (value) => {
     this.setState({switch3Value: value})
-    console.log('Switch 3 is: ' + value)
+    console.log('Asr is: ' + value)
   };
   
   toggleSwitch4 = (value) => {
     this.setState({switch4Value: value})
-    console.log('Switch 4 is: ' + value)
+    console.log('Maghrib is: ' + value)
   };
 
   toggleSwitch5 = (value) => {
     this.setState({switch5Value: value})
-    console.log('Switch 5 is: ' + value)
+    console.log('Isha is: ' + value)
   } 
   render() {
     /* Go ahead and delete ExpoConfigView and replace it with your
@@ -68,19 +68,19 @@ export default class SettingsScreen extends React.Component {
     return (
      	  <View>
     	      <Text>
-    	        Calculating Prayer Times: 
+    	        Toggle Prayers time notifications
     	      </Text>
     	      <SwitchExample
     	         toggleSwitch1 = {this.toggleSwitch1}
                toggleSwitch2 = {this.toggleSwitch2}
-               toggleSwitch3 = {this.toggleSwitch2}
-               toggleSwitch4 = {this.toggleSwitch2}
-               toggleSwitch5 = {this.toggleSwitch2}
+               toggleSwitch3 = {this.toggleSwitch3}
+               toggleSwitch4 = {this.toggleSwitch4}
+               toggleSwitch5 = {this.toggleSwitch5}
                switch1Value = {this.state.switch1Value}
                switch2Value = {this.state.switch2Value}
-               switch3Value = {this.state.switch2Value}
-               switch4Value = {this.state.switch2Value}
-               switch5Value = {this.state.switch2Value}/>
+               switch3Value = {this.state.switch3Value}
+               switch4Value = {this.state.switch4Value}
+               switch5Value = {this.state.switch5Value}/>
 
    	      </View>
    	)
