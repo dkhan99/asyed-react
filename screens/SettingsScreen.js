@@ -12,6 +12,11 @@ import {
   Switch,
 } from 'react-native';
 
+// Accordian for settings
+// Move compass and salah timings to same page
+// Sliding bar for notifications 0-5
+
+
 import SwitchExample from "./switch";
 
 export default class SettingsScreen extends React.Component {
@@ -62,7 +67,7 @@ export default class SettingsScreen extends React.Component {
     	.setItem( "Fajr", switch1Value )
     	.then(() => console.log("Saved selection to disk: " + switch1Value))
     	.catch(error =>
-     	console.error("AsyncStorage error: " + error.message))
+     	  console.error("AsyncStorage error: " + error.message))
     	.done();  
 
     return (

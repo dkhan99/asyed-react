@@ -11,7 +11,7 @@ import {
   AsyncStorage,
   View,
 } from 'react-native';
-import { WebBrowser, Constants, Location, Permissions } from 'expo';
+import { WebBrowser, Constants, Location, Permissions, Notifications } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 
@@ -101,80 +101,158 @@ spin () {
         errorMessage: 'Permission to access location was denied',
       });
     }
-
-
-    const getLocation = (location) => {
-        this.setState({ location });
+    let result = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    if (result.status !== 'granted') {
+      this.setState({
+        errorMessage: 'Permission to send push notification was denied',
+      });
     }
+    if (Constants.lisDevice && result.status === 'granted') {
+    console.log('Notification permissions granted.')}
+// Getting and setting the compass heading direction
+    const setHeader = (header) => {
+        this.setState({ header });
+    }
+    await Location.watchHeadingAsync(setHeader);
 
-    let location = await Location.watchHeadingAsync(getLocation);
+// Getting and setting the coordinates
+    let locationcoords = await Location.getCurrentPositionAsync({});
+    this.setState({ locationcoords });
+// Making the Prayer Times API call
+    let REQUEST_URL = 'http://api.aladhan.com/timings/'+(~~(Date.now()/1000))+'?latitude=' + this.state.locationcoords.coords.latitude + '&longitude=' + this.state.locationcoords.coords.longitude;
+    console.log('REQUEST_URL', REQUEST_URL);
+    fetch(REQUEST_URL)
+      .then((response) => response.json())
+      .then((responseData) => {
+        // (hours + 11)%12 +1   to convert 24 hr to 12 hr
+        responseData.data.timings["test"] = "1:39 pm";  // Test notification timing
+        Notifications.cancelAllScheduledNotificationsAsync();
 
+        for (var salah in responseData.data.timings) {
+          
+        // Moved the notification scheduling here 
+          let datePrayer = new Date(responseData.data.date.readable + " "+ responseData.data.timings[salah]).getTime()
+          console.log("the reseponse data", salah, datePrayer )
+          if (datePrayer > Date.now()){
+              let schedulingOptions = {
+                time: datePrayer, 
+                // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
+                // time: 1513120980000, // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
+                // repeat: "minute"
+              };
+
+              let localNotification = {
+                title: "Time for " + salah, 
+                body: salah + " is at " + responseData.data.timings[salah],
+                // sound: "./adhanMakkah.wav",
+                ios:{sound:true},
+                android:{sound:true, priority: 'max'}
+              };
+              Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions);
+          }
+
+          let stdTime = String((Number(responseData.data.timings[salah].split(':')[0])+ 11) %12 +1);
+          let stdTimeArr = responseData.data.timings[salah].split(':')
+          stdTimeArr[0] = stdTime;
+          responseData.data.timings[salah] = stdTimeArr.join(':')
+
+        }
+
+        this.setState({
+          timings: responseData.data.timings,
+        });
+        console.log("Timings in Homescreen", responseData.data.timings)
+      })
+      .done();
 
   };
 
   render() {
-const spinner = this.spinValue.interpolate({inputRange: [0, 1], outputRange: ['0deg', '360deg'], useNativeDriver: true});
+   
+    
+    const spinner = this.spinValue.interpolate({inputRange: [0, 1], outputRange: ['0deg', '360deg'], useNativeDriver: true});
     let text = 'Waiting..';
-    let pointer = "0deg"
+    let pointer = "0deg";
 
-// console.log("------------------------------", this.state.location.trueHeading)
     if (this.state.errorMessage) {
       text = this.state.errorMessage;
-    } else if (this.state.location) {
-      text = JSON.stringify(this.state.location);
-
-// console.log("------------------------------", spinner)
-let lat1 = this.state.latitude * (Math.PI/180)
-let long1 = this.state.longitude * (Math.PI/180)
-let lat2 = 21.422487 * (Math.PI/180)
-let long2 = 39.826206 * (Math.PI/180)
-var y = Math.sin(long2-long1) * Math.cos(lat2);
-var x = Math.cos(lat1)*Math.sin(lat2) -
-        Math.sin(lat1)*Math.cos(lat2)*Math.cos(long2-long1);
-var brng = (Math.atan2(y, x))*(  180 / Math.PI);
-var final = (brng + 360 ) % 360;
-   pointer = -this.state.location.trueHeading + final + "deg";
-   // pointer = -this.state.location.magHeading + final + "deg";
-
-
-    }
-
-    return (
-      <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <View style={styles.welcomeContainer}>
-            <Animated.Image
-              style = {{transform: [{rotate: pointer}] }}
-              source={require('../assets/images/pointer.png')}
-            />
-          </View>
-
-          <View style={styles.getStartedContainer}>
-            
-            <Text style={styles.getStartedText}>
-              {text}
-            </Text>
-
-            <Text onPress={this._googleQiblaFinder} style={styles.helpLinkText}>
-              Try this to use the google qiblah finder
-            </Text>
-          </View>
-          <View style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text>Latitude: {this.state.latitude}</Text>
-            <Text>Longitude: {this.state.longitude}</Text>
-            {this.state.error ? <Text>Error: {this.state.error}</Text> : null}
-          </View>
-        </ScrollView>
-
-        <View style={styles.tabBarInfoContainer}>
-          <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
-
-          <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-            <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
-          </View>
+      return (
+        <View style={styles.container}>
+              <Text style={styles.getStartedText}>
+                {text}
+              </Text>
         </View>
-      </View>
-    );
+      );
+    } 
+
+    else if (this.state.header && this.state.timings) {
+      const timings = this.state.timings;
+      console.log("------------------------------", spinner)
+      let lat1 = this.state.latitude * (Math.PI/180)
+      let long1 = this.state.longitude * (Math.PI/180)
+      let lat2 = 21.422487 * (Math.PI/180)
+      let long2 = 39.826206 * (Math.PI/180)
+      var y = Math.sin(long2-long1) * Math.cos(lat2);
+      var x = Math.cos(lat1)*Math.sin(lat2) -
+              Math.sin(lat1)*Math.cos(lat2)*Math.cos(long2-long1);
+      var brng = (Math.atan2(y, x))*(  180 / Math.PI);
+      var final = (brng + 360 ) % 360;
+         pointer = -this.state.header.trueHeading + final + "deg";
+         // pointer = -this.state.header.magHeading + final + "deg";
+
+      return (
+        <View style={styles.container}>
+          <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+            <View style={styles.welcomeContainer}>
+              <Animated.Image
+                style = {{transform: [{rotate: pointer}] }}
+                source={require('../assets/images/pointer.png')}
+              />
+            </View>
+
+            <View style={styles.getStartedContainer}>
+              
+
+              <Text onPress={this._googleQiblaFinder} style={styles.helpLinkText}>
+                Try this to use the google qiblah finder
+              </Text>
+              
+              <Text style={styles.getStartedText}>
+                The Prayer Timings 
+              </Text>
+
+              <Text>
+                Fajr time:  {timings.Fajr}
+              </Text>
+              <Text>
+                Duhr time:  {timings.Dhuhr}
+              </Text>
+              <Text>
+                Asr time: {timings.Asr}
+              </Text>
+              <Text>
+                Maghrib time: {timings.Maghrib}
+              </Text>
+              <Text>
+                Isha time:  {timings.Isha}
+              </Text>
+
+            </View>
+          </ScrollView>
+
+        </View>
+      );
+    }
+    else{
+      return (
+        <View style={styles.container}>
+            <Text>
+              Calculating Direction
+            </Text>
+          </View>
+      );
+    }
+    
   }
 
   _maybeRenderDevelopmentModeWarning() {
