@@ -25,10 +25,74 @@ export default class TimingsScreen extends React.Component {
         errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
       });
     } else {
-      
+      this._getLocationAsync();
     }
   }
 
+  // _getLocationAsync = async () => {
+  //   let { status } = await Permissions.askAsync(Permissions.LOCATION);
+  //   if (status !== 'granted') {
+  //     this.setState({
+  //       errorMessage: 'Permission to access location was denied',
+  //     });
+  //   }
+  //   let result = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+  //   if (result.status !== 'granted') {
+  //     this.setState({
+  //       errorMessage: 'Permission to send push notification was denied',
+  //     });
+  //   }
+  //   if (Constants.lisDevice && result.status === 'granted') {
+  //   console.log('Notification permissions granted.')}
+
+  //   let location = await Location.getCurrentPositionAsync({});
+  //   this.setState({ location });
+  //   let REQUEST_URL = 'http://api.aladhan.com/timings/'+(~~(Date.now()/1000))+'?latitude='+this.state.location.coords.latitude+'&longitude='+this.state.location.coords.longitude
+  //   console.log('REQUEST_URL', REQUEST_URL)
+  //   fetch(REQUEST_URL)
+  //     .then((response) => response.json())
+  //     .then((responseData) => {
+  //     	// (hours + 11)%12 +1   to convert 24 hr to 12 hr
+
+  //       responseData.data.timings["teset"] = "1:39 pm";
+  //       Notifications.cancelAllScheduledNotificationsAsync();
+
+  //     	for (var salah in responseData.data.timings) {
+          
+  //  // Moved the notification scheduling here 
+  //         let datePrayer = new Date(responseData.data.date.readable + " "+ responseData.data.timings[salah]).getTime()
+  //         console.log("the reseponse data", salah, datePrayer )
+  //         if (datePrayer > Date.now()){
+  //             let schedulingOptions = {
+  //               time: datePrayer, 
+  //               // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
+  //               // time: 1513120980000, // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
+  //               // repeat: "minute"
+  //             };
+
+  //             let localNotification = {
+  //               title: "Time for " + salah, 
+  //               body: salah + " is at " + responseData.data.timings[salah],
+  //               // sound: "./adhanMakkah.wav",
+  //               ios:{sound:true},
+  //               android:{sound:true, priority: 'max'}
+
+  //             };
+  //             Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions);
+  //         }
+
+  //         // console.log(salah)
+  //     		let stdTime = String((Number(responseData.data.timings[salah].split(':')[0])+ 11) %12 +1);
+  //     		let stdTimeArr = responseData.data.timings[salah].split(':')
+  //     		stdTimeArr[0] = stdTime;
+  //     		responseData.data.timings[salah] = stdTimeArr.join(':')
+  //     	}
+  //       this.setState({
+  //         timings: responseData.data.timings,
+  //       });
+  //     })
+  //     .done();
+  // };
 
   
  

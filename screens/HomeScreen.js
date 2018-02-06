@@ -187,7 +187,6 @@ spin () {
 
     else if (this.state.header && this.state.timings) {
       const timings = this.state.timings;
-      console.log("------------------------------", spinner)
       let lat1 = this.state.latitude * (Math.PI/180)
       let long1 = this.state.longitude * (Math.PI/180)
       let lat2 = 21.422487 * (Math.PI/180)

@@ -8,16 +8,16 @@ import Colors from '../constants/Colors';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import TimingsScreen from '../screens/TimingsScreen';
+// import TimingsScreen from '../screens/TimingsScreen';
 
 export default TabNavigator(
   {
     Qiblah: {
       screen: HomeScreen,
     },
-    Timings: {
-      screen: TimingsScreen,
-    },
+    // Timings: {
+    //   screen: TimingsScreen,
+    // },
     Links: {
       screen: LinksScreen,
     },
