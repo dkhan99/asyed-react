@@ -27,39 +27,38 @@ export default class SettingsScreen extends React.Component {
     super(props);
   
     this.state = {
-    	switch1Value: true,
-    	switch2Value: true,
-    	switch3Value: true,
-    	switch4Value: true,
-    	switch5Value: true,
+    	Fajr: true,
+    	Duhr: true,
+    	Asr: true,
+    	Maghrib: true,
+    	Isha: true,
     };
 
   }
 
   componentWillMount() {
-      
-  AsyncStorage
-      .getItem("Fajr")
+    let prayers = ["Fajr", "Duhr", "Asr", "Maghrib", "Isha"]
+    for (var i = 0; i < prayers.length; i++) {
+      let prayer = prayers[i];
+      AsyncStorage
+      .getItem(prayer)
       .then(value => {
         if (value !== null) {
-          console.log("is Fajr in Storage", value)
-          console.log(JSON.parse(value), "here")
-          // this.state.switch1Value = JSON.parse(value);
-          this.setState({ switch1Value: JSON.parse(value)});
-          console.log(this.state.switch1Value, "here2")
-        }
-        else{
-          console.log("is Fajr in Storage", value)
+          let object = {};
+          object[prayer] = JSON.parse(value);
+          this.setState(object);
         }
       })
       .catch(error =>
         console.error("AsyncStorage error: " + error.message))
       .done();
+    }
+    
       
   } 
 
   toggleSwitch1 = (value) => {
-    this.setState({switch1Value: value})
+    this.setState({Fajr: value})
     console.log('Fajr is: ' + value)
     AsyncStorage
       .setItem( "Fajr", value.toString() )
@@ -70,23 +69,48 @@ export default class SettingsScreen extends React.Component {
   };
    
   toggleSwitch2 = (value) => {
-    this.setState({switch2Value: value})
+    this.setState({Duhr: value})
     console.log('Duhr is: ' + value)
+    AsyncStorage
+      .setItem( "Duhr", value.toString() )
+      .then(() => console.log("Saved selection to disk: " + value))
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done(); 
   };
 
   toggleSwitch3 = (value) => {
-    this.setState({switch3Value: value})
+    this.setState({Asr: value})
     console.log('Asr is: ' + value)
+    AsyncStorage
+      .setItem( "Asr", value.toString() )
+      .then(() => console.log("Saved selection to disk: " + value))
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done(); 
+
   };
   
   toggleSwitch4 = (value) => {
-    this.setState({switch4Value: value})
-    console.log('Maghrib is: ' + value)
+    this.setState({Maghrib: value});
+    console.log('Maghrib is: ' + value);
+    AsyncStorage
+      .setItem( "Maghrib", value.toString() )
+      .then(() => console.log("Saved selection to disk: " + value))
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done(); 
   };
 
   toggleSwitch5 = (value) => {
-    this.setState({switch5Value: value})
-    console.log('Isha is: ' + value)
+    this.setState({Isha: value})
+    console.log('Isha is: ' + value);
+    AsyncStorage
+      .setItem( "Is", value.toString() )
+      .then(() => console.log("Saved selection to disk: " + value))
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done(); 
   } 
 
 
@@ -94,15 +118,6 @@ export default class SettingsScreen extends React.Component {
 
   render() {
     
-
-
-    // let switch1Value = JSON.stringify(this.state.switch1Value);
-    // AsyncStorage
-    // 	.setItem( "Fajr", switch1Value )
-    // 	.then(() => console.log("Saved selection fajr to disk: " + switch1Value))
-    // 	.catch(error =>
-    //  	  console.error("AsyncStorage error: " + error.message))
-    // 	.done();  
 
     return (
      	  <View>
@@ -115,11 +130,11 @@ export default class SettingsScreen extends React.Component {
                toggleSwitch3 = {this.toggleSwitch3}
                toggleSwitch4 = {this.toggleSwitch4}
                toggleSwitch5 = {this.toggleSwitch5}
-               switch1Value = {this.state.switch1Value}
-               switch2Value = {this.state.switch2Value}
-               switch3Value = {this.state.switch3Value}
-               switch4Value = {this.state.switch4Value}
-               switch5Value = {this.state.switch5Value}/>
+               switch1Value = {this.state.Fajr}
+               switch2Value = {this.state.Duhr}
+               switch3Value = {this.state.Asr}
+               switch4Value = {this.state.Maghrib}
+               switch5Value = {this.state.Isha}/>
 
    	      </View>
    	)
