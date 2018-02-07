@@ -33,11 +33,40 @@ export default class SettingsScreen extends React.Component {
     	switch4Value: true,
     	switch5Value: true,
     };
+
   }
+
+  componentWillMount() {
+      
+  AsyncStorage
+      .getItem("Fajr")
+      .then(value => {
+        if (value !== null) {
+          console.log("is Fajr in Storage", value)
+          console.log(JSON.parse(value), "here")
+          // this.state.switch1Value = JSON.parse(value);
+          this.setState({ switch1Value: JSON.parse(value)});
+          console.log(this.state.switch1Value, "here2")
+        }
+        else{
+          console.log("is Fajr in Storage", value)
+        }
+      })
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done();
+      
+  } 
 
   toggleSwitch1 = (value) => {
     this.setState({switch1Value: value})
     console.log('Fajr is: ' + value)
+    AsyncStorage
+      .setItem( "Fajr", value.toString() )
+      .then(() => console.log("Saved selection to disk: " + value))
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done(); 
   };
    
   toggleSwitch2 = (value) => {
@@ -59,16 +88,21 @@ export default class SettingsScreen extends React.Component {
     this.setState({switch5Value: value})
     console.log('Isha is: ' + value)
   } 
+
+
+  
+
   render() {
-    /* Go ahead and delete ExpoConfigView and replace it with your
-     * content, we just wanted to give you a quick view of your config */
-    let switch1Value = JSON.stringify(this.state.switch1Value);
-    AsyncStorage
-    	.setItem( "Fajr", switch1Value )
-    	.then(() => console.log("Saved selection to disk: " + switch1Value))
-    	.catch(error =>
-     	  console.error("AsyncStorage error: " + error.message))
-    	.done();  
+    
+
+
+    // let switch1Value = JSON.stringify(this.state.switch1Value);
+    // AsyncStorage
+    // 	.setItem( "Fajr", switch1Value )
+    // 	.then(() => console.log("Saved selection fajr to disk: " + switch1Value))
+    // 	.catch(error =>
+    //  	  console.error("AsyncStorage error: " + error.message))
+    // 	.done();  
 
     return (
      	  <View>
