@@ -12,75 +12,129 @@ import {
   Switch,
 } from 'react-native';
 
+// Accordian for settings
+// Move compass and salah timings to same page
+// Sliding bar for notifications 0-5
+
+
 import SwitchExample from "./switch";
 
 export default class SettingsScreen extends React.Component {
   static navigationOptions = {
-    title: 'app.json',
+    title: 'Settings',
   };
   constructor(props) {
     super(props);
   
     this.state = {
-    	switch1Value: false,
-    	switch2Value: false,
-    	switch3Value: false,
-    	switch4Value: false,
-    	switch5Value: false,
+    	Fajr: true,
+    	Duhr: true,
+    	Asr: true,
+    	Maghrib: true,
+    	Isha: true,
     };
+
   }
 
+  componentWillMount() {
+    let prayers = ["Fajr", "Duhr", "Asr", "Maghrib", "Isha"]
+    for (var i = 0; i < prayers.length; i++) {
+      let prayer = prayers[i];
+      AsyncStorage
+      .getItem(prayer)
+      .then(value => {
+        if (value !== null) {
+          let object = {};
+          object[prayer] = JSON.parse(value);
+          this.setState(object);
+        }
+      })
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done();
+    }
+    
+      
+  } 
+
   toggleSwitch1 = (value) => {
-    this.setState({switch1Value: value})
+    this.setState({Fajr: value})
     console.log('Fajr is: ' + value)
+    AsyncStorage
+      .setItem( "Fajr", value.toString() )
+      .then(() => console.log("Saved selection to disk: " + value))
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done(); 
   };
    
   toggleSwitch2 = (value) => {
-    this.setState({switch2Value: value})
-    console.log('Switch 2 is: ' + value)
+    this.setState({Duhr: value})
+    console.log('Duhr is: ' + value)
+    AsyncStorage
+      .setItem( "Duhr", value.toString() )
+      .then(() => console.log("Saved selection to disk: " + value))
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done(); 
   };
 
   toggleSwitch3 = (value) => {
-    this.setState({switch3Value: value})
-    console.log('Switch 3 is: ' + value)
+    this.setState({Asr: value})
+    console.log('Asr is: ' + value)
+    AsyncStorage
+      .setItem( "Asr", value.toString() )
+      .then(() => console.log("Saved selection to disk: " + value))
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done(); 
+
   };
   
   toggleSwitch4 = (value) => {
-    this.setState({switch4Value: value})
-    console.log('Switch 4 is: ' + value)
+    this.setState({Maghrib: value});
+    console.log('Maghrib is: ' + value);
+    AsyncStorage
+      .setItem( "Maghrib", value.toString() )
+      .then(() => console.log("Saved selection to disk: " + value))
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done(); 
   };
 
   toggleSwitch5 = (value) => {
-    this.setState({switch5Value: value})
-    console.log('Switch 5 is: ' + value)
-  } 
-  render() {
-    /* Go ahead and delete ExpoConfigView and replace it with your
-     * content, we just wanted to give you a quick view of your config */
-    let switch1Value = JSON.stringify(this.state.switch1Value);
+    this.setState({Isha: value})
+    console.log('Isha is: ' + value);
     AsyncStorage
-    	.setItem( "Fajr", switch1Value )
-    	.then(() => console.log("Saved selection to disk: " + switch1Value))
-    	.catch(error =>
-     	console.error("AsyncStorage error: " + error.message))
-    	.done();  
+      .setItem( "Is", value.toString() )
+      .then(() => console.log("Saved selection to disk: " + value))
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done(); 
+  } 
+
+
+  
+
+  render() {
+    
 
     return (
      	  <View>
     	      <Text>
-    	        Calculating Prayer Times: 
+    	        Toggle Prayers time notifications
     	      </Text>
     	      <SwitchExample
     	         toggleSwitch1 = {this.toggleSwitch1}
                toggleSwitch2 = {this.toggleSwitch2}
-               toggleSwitch3 = {this.toggleSwitch2}
-               toggleSwitch4 = {this.toggleSwitch2}
-               toggleSwitch5 = {this.toggleSwitch2}
-               switch1Value = {this.state.switch1Value}
-               switch2Value = {this.state.switch2Value}
-               switch3Value = {this.state.switch2Value}
-               switch4Value = {this.state.switch2Value}
-               switch5Value = {this.state.switch2Value}/>
+               toggleSwitch3 = {this.toggleSwitch3}
+               toggleSwitch4 = {this.toggleSwitch4}
+               toggleSwitch5 = {this.toggleSwitch5}
+               switch1Value = {this.state.Fajr}
+               switch2Value = {this.state.Duhr}
+               switch3Value = {this.state.Asr}
+               switch4Value = {this.state.Maghrib}
+               switch5Value = {this.state.Isha}/>
 
    	      </View>
    	)
