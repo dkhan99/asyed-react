@@ -125,32 +125,53 @@ spin () {
       .then((response) => response.json())
       .then((responseData) => {
         // (hours + 11)%12 +1   to convert 24 hr to 12 hr
-        responseData.data.timings["test"] = "1:39 pm";  // Test notification timing
+        responseData.data.timings["Fajr"] = "9:26 pm";  // Test notification timing
+        responseData.data.timings["Dhuhr"] = "9:26 pm";  // Test notification timing
+        responseData.data.timings["Asr"] = "9:26 pm";  // Test notification timing
         Notifications.cancelAllScheduledNotificationsAsync();
 
+
+        // Aync Storage isn't working within the for loop try doing the async calls before or check the settings screen
+        let obj = {}
         for (var salah in responseData.data.timings) {
+          console.log("salah as salah", salah)
           
-        // Moved the notification scheduling here 
-          let datePrayer = new Date(responseData.data.date.readable + " "+ responseData.data.timings[salah]).getTime()
-          console.log("the reseponse data", salah, datePrayer )
-          if (datePrayer > Date.now()){
-              let schedulingOptions = {
-                time: datePrayer, 
-                // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
-                // time: 1513120980000, // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
-                // repeat: "minute"
-              };
+          console.log(obj)
+          _getSalahValues = async (salah) => {
 
-              let localNotification = {
-                title: "Time for " + salah, 
-                body: salah + " is at " + responseData.data.timings[salah],
-                // sound: "./adhanMakkah.wav",
-                ios:{sound:true},
-                android:{sound:true, priority: 'max'}
-              };
-              Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions);
+          
+            await AsyncStorage
+                .getItem(salah)
+                // .then(value => value == 'true')
+                .then(value => {
+                  // Moved the notification scheduling here 
+                  console.log(salah, value)
+                  if (value !== null) {
+                    let datePrayer = new Date(responseData.data.date.readable + " "+ responseData.data.timings[salah]).getTime()
+                    // console.log("the reseponse data", salah, datePrayer )
+                    if (datePrayer > Date.now()){
+                        let schedulingOptions = {
+                          time: datePrayer, 
+                          // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
+                          // time: 1513120980000, // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
+                          // repeat: "minute"
+                        };
+
+                        let localNotification = {
+                          title: "Time for " + salah, 
+                          body: salah + " is at " + responseData.data.timings[salah],
+                          // sound: "./adhanMakkah.wav",
+                          ios:{sound:true},
+                          android:{sound:true, priority: 'max'}
+                        };
+                        Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions);
+                        console.log( salah, "notification set at ", responseData.data.timings[salah])
+                    }
+                  }
+                })
+                .done()
           }
-
+          _getSalahValues(salah)
           let stdTime = String((Number(responseData.data.timings[salah].split(':')[0])+ 11) %12 +1);
           let stdTimeArr = responseData.data.timings[salah].split(':')
           stdTimeArr[0] = stdTime;

@@ -28,7 +28,7 @@ export default class SettingsScreen extends React.Component {
   
     this.state = {
     	Fajr: true,
-    	Duhr: true,
+    	Dhuhr: true,
     	Asr: true,
     	Maghrib: true,
     	Isha: true,
@@ -37,7 +37,7 @@ export default class SettingsScreen extends React.Component {
   }
 
   componentWillMount() {
-    let prayers = ["Fajr", "Duhr", "Asr", "Maghrib", "Isha"]
+    let prayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"]
     for (var i = 0; i < prayers.length; i++) {
       let prayer = prayers[i];
       AsyncStorage
@@ -69,10 +69,10 @@ export default class SettingsScreen extends React.Component {
   };
    
   toggleSwitch2 = (value) => {
-    this.setState({Duhr: value})
-    console.log('Duhr is: ' + value)
+    this.setState({Dhuhr: value})
+    console.log('Dhuhr is: ' + value)
     AsyncStorage
-      .setItem( "Duhr", value.toString() )
+      .setItem( "Dhuhr", value.toString() )
       .then(() => console.log("Saved selection to disk: " + value))
       .catch(error =>
         console.error("AsyncStorage error: " + error.message))
@@ -106,7 +106,7 @@ export default class SettingsScreen extends React.Component {
     this.setState({Isha: value})
     console.log('Isha is: ' + value);
     AsyncStorage
-      .setItem( "Is", value.toString() )
+      .setItem( "Isha", value.toString() )
       .then(() => console.log("Saved selection to disk: " + value))
       .catch(error =>
         console.error("AsyncStorage error: " + error.message))
@@ -131,7 +131,7 @@ export default class SettingsScreen extends React.Component {
                toggleSwitch4 = {this.toggleSwitch4}
                toggleSwitch5 = {this.toggleSwitch5}
                switch1Value = {this.state.Fajr}
-               switch2Value = {this.state.Duhr}
+               switch2Value = {this.state.Dhuhr}
                switch3Value = {this.state.Asr}
                switch4Value = {this.state.Maghrib}
                switch5Value = {this.state.Isha}/>
