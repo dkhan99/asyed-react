@@ -52,12 +52,12 @@ export default class SettingsScreen extends React.Component {
       .catch(error =>
         console.error("AsyncStorage error: " + error.message))
       .done();
-    }
-    
-      
+    }  
   } 
 
   toggleSwitch1 = (value) => {
+
+     
     this.setState({Fajr: value})
     console.log('Fajr is: ' + value)
     AsyncStorage
@@ -66,6 +66,8 @@ export default class SettingsScreen extends React.Component {
       .catch(error =>
         console.error("AsyncStorage error: " + error.message))
       .done(); 
+    this.props.navigation.state["update"] = true;
+    console.log("--------------", this.props.navigation.state.update)
   };
    
   toggleSwitch2 = (value) => {

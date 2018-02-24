@@ -121,40 +121,54 @@ spin () {
 // Making the Prayer Times API call
     let REQUEST_URL = 'http://api.aladhan.com/timings/'+(~~(Date.now()/1000))+'?latitude=' + this.state.locationcoords.coords.latitude + '&longitude=' + this.state.locationcoords.coords.longitude;
     console.log('REQUEST_URL', REQUEST_URL);
+    let timings = {}
     fetch(REQUEST_URL)
       .then((response) => response.json())
       .then((responseData) => {
         // (hours + 11)%12 +1   to convert 24 hr to 12 hr
-        responseData.data.timings["Fajr"] = "9:26 pm";  // Test notification timing
-        responseData.data.timings["Dhuhr"] = "9:26 pm";  // Test notification timing
-        responseData.data.timings["Asr"] = "9:26 pm";  // Test notification timing
+        // responseData.data.timings["Fajr"] = "9:26 pm";  // Test notification timing
+        // responseData.data.timings["Dhuhr"] = "9:26 pm";  // Test notification timing
+        // responseData.data.timings["Asr"] = "9:26 pm";  // Test notification timing
         Notifications.cancelAllScheduledNotificationsAsync();
 
 
         // Aync Storage isn't working within the for loop try doing the async calls before or check the settings screen
         let obj = {}
+        AsyncStorage
+        .getAllKeys()
+
+        .then(storage => console.log("All Items in the Storage-", storage))
+        .catch(error =>
+          console.error("AsyncStorage error: " + error.message))
+        .done();
         for (var salah in responseData.data.timings) {
           console.log("salah as salah", salah)
           
           console.log(obj)
           _getSalahValues = async (salah) => {
-
+            this.props.navigation.state.update = false;
+          console.log(this.props.navigation.state.update);
           
             await AsyncStorage
                 .getItem(salah)
                 // .then(value => value == 'true')
-                .then(value => {
+                .then(salahvalue => {
                   // Moved the notification scheduling here 
-                  console.log(salah, value)
-                  if (value !== null) {
-                    let datePrayer = new Date(responseData.data.date.readable + " "+ responseData.data.timings[salah]).getTime()
-                    // console.log("the reseponse data", salah, datePrayer )
-                    if (datePrayer > Date.now()){
+                  console.log(salah, salahvalue)
+                  if (salahvalue == "true") {
+                    let d = new Date(responseData.data.date.readable + " "+ responseData.data.timings[salah])
+                    datePrayer = d.getTime();
+                    console.log("the response datePrayer", salah, datePrayer);
+                    console.log("the response date", Date.now());
+                    // console.log(responseData.data.date.readable , datePrayer, Date.now(), responseData.data.timings[salah]).getTime() )
+                    if (datePrayer < Date.now()){
+                      datePrayer += 86400000
+                    }
                         let schedulingOptions = {
                           time: datePrayer, 
                           // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
                           // time: 1513120980000, // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
-                          // repeat: "minute"
+                          repeat: "day"
                         };
 
                         let localNotification = {
@@ -166,23 +180,25 @@ spin () {
                         };
                         Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions);
                         console.log( salah, "notification set at ", responseData.data.timings[salah])
-                    }
+                    
                   }
                 })
                 .done()
           }
           _getSalahValues(salah)
-          let stdTime = String((Number(responseData.data.timings[salah].split(':')[0])+ 11) %12 +1);
-          let stdTimeArr = responseData.data.timings[salah].split(':')
-          stdTimeArr[0] = stdTime;
-          responseData.data.timings[salah] = stdTimeArr.join(':')
-
+            let stdTime = String((Number(responseData.data.timings[salah].split(':')[0])+ 11) %12 +1);
+            let stdTimeArr = responseData.data.timings[salah].split(':');
+            stdTimeArr[0] = stdTime;
+            timings[salah] = stdTimeArr.join(':');
         }
 
+        console.log("the response data 1", responseData.data)
+
         this.setState({
-          timings: responseData.data.timings,
+          timings: timings,
         });
-        console.log("Timings in Homescreen", responseData.data.timings)
+        console.log("responsedata Timings in Homescreen", responseData.data.timings)
+        console.log("Timings in Homescreen", timings)
       })
       .done();
 
