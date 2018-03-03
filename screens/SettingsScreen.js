@@ -75,7 +75,7 @@ export default class SettingsScreen extends React.Component {
   
     this.state = {
     	Fajr: true,
-    	Duhr: true,
+    	Dhuhr: true,
     	Asr: true,
     	Maghrib: true,
     	Isha: true,
@@ -94,7 +94,7 @@ export default class SettingsScreen extends React.Component {
   }
 
   componentWillMount() {
-    let prayers = ["Fajr", "Duhr", "Asr", "Maghrib", "Isha"]
+    let prayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"]
     for (var i = 0; i < prayers.length; i++) {
       let prayer = prayers[i];
       AsyncStorage
@@ -109,12 +109,15 @@ export default class SettingsScreen extends React.Component {
       .catch(error =>
         console.error("AsyncStorage error: " + error.message))
       .done();
+
     }
     
   } 
 
 
   toggleSwitch1 = (value) => {
+
+     
     this.setState({Fajr: value})
     console.log('Fajr is: ' + value)
     AsyncStorage
@@ -123,13 +126,15 @@ export default class SettingsScreen extends React.Component {
       .catch(error =>
         console.error("AsyncStorage error: " + error.message))
       .done(); 
+    this.props.navigation.state["update"] = true;
+    console.log("--------------", this.props.navigation.state.update)
   };
    
   toggleSwitch2 = (value) => {
-    this.setState({Duhr: value})
-    console.log('Duhr is: ' + value)
+    this.setState({Dhuhr: value})
+    console.log('Dhuhr is: ' + value)
     AsyncStorage
-      .setItem( "Duhr", value.toString() )
+      .setItem( "Dhuhr", value.toString() )
       .then(() => console.log("Saved selection to disk: " + value))
       .catch(error =>
         console.error("AsyncStorage error: " + error.message))
@@ -163,7 +168,7 @@ export default class SettingsScreen extends React.Component {
     this.setState({Isha: value})
     console.log('Isha is: ' + value);
     AsyncStorage
-      .setItem( "Is", value.toString() )
+      .setItem( "Isha", value.toString() )
       .then(() => console.log("Saved selection to disk: " + value))
       .catch(error =>
         console.error("AsyncStorage error: " + error.message))
@@ -177,6 +182,7 @@ export default class SettingsScreen extends React.Component {
 
   
     return (
+
      	<View style={styles.container}>
         <TouchableHighlight onPress={this._toggleExpanded}>
           <View style={styles.header}>
@@ -216,6 +222,25 @@ export default class SettingsScreen extends React.Component {
         </Collapsible>
 
       </View>
+
+     	  <View>
+    	      <Text>
+    	        Toggle Prayers time notifications
+    	      </Text>
+    	      <SwitchExample
+    	         toggleSwitch1 = {this.toggleSwitch1}
+               toggleSwitch2 = {this.toggleSwitch2}
+               toggleSwitch3 = {this.toggleSwitch3}
+               toggleSwitch4 = {this.toggleSwitch4}
+               toggleSwitch5 = {this.toggleSwitch5}
+               switch1Value = {this.state.Fajr}
+               switch2Value = {this.state.Dhuhr}
+               switch3Value = {this.state.Asr}
+               switch4Value = {this.state.Maghrib}
+               switch5Value = {this.state.Isha}/>
+
+   	      </View>
+
    	)
   }
 }
