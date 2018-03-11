@@ -85,15 +85,15 @@ export default class SettingsScreen extends React.Component {
       activeSection: false,
       collapsed1: true,
       collapsed2: true,
-      value: 50,
+      value: 5,
     };
   }
 
     change(value) {
-    this.setState(() => {
-      return {
-        value: parseFloat(value),
-      };
+      this.setState(() => {
+        return {
+          value: parseFloat(value),
+        };
     });
   }
 
@@ -190,7 +190,7 @@ export default class SettingsScreen extends React.Component {
      	<View style={styles.container}>
         <TouchableHighlight onPress={this._toggleExpanded1}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>Select Prayer Time Notifications</Text>
+            <Text style={styles.headerText}>Select Prayer Notifications</Text>
           </View>
         </TouchableHighlight>
         <Collapsible collapsed={this.state.collapsed1} align="center">
@@ -210,7 +210,7 @@ export default class SettingsScreen extends React.Component {
         </Collapsible>
         <TouchableHighlight onPress={this._toggleExpanded2}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>Slide Away...</Text>
+            <Text style={styles.headerText}>Select other Notifications</Text>
           </View>
         </TouchableHighlight>
         <Collapsible collapsed={this.state.collapsed2} align="center">
@@ -218,10 +218,11 @@ export default class SettingsScreen extends React.Component {
             <Text style={styles.headerText}>{String(value)}</Text>
             <Slider
               step={1}
-              maximumValue={100}
+              maximumValue={5}
               onValueChange={this.change.bind(this)}
               value={value}
             />
+            <Text style={styles.title}>Notifications per Day</Text>
           </View>
         </Collapsible>
 

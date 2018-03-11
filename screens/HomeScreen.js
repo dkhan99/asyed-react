@@ -126,7 +126,7 @@ spin () {
       .then((response) => response.json())
       .then((responseData) => {
         // (hours + 11)%12 +1   to convert 24 hr to 12 hr
-        // responseData.data.timings["Fajr"] = "9:26 pm";  // Test notification timing
+        // responseData.data.timings["Fajr"] = "4:19 pm";  // Test notification timing
         // responseData.data.timings["Dhuhr"] = "9:26 pm";  // Test notification timing
         // responseData.data.timings["Asr"] = "9:26 pm";  // Test notification timing
         Notifications.cancelAllScheduledNotificationsAsync();
