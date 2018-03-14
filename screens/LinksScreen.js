@@ -23,7 +23,11 @@ export default class LinksScreen extends React.Component {
 
    _handleNotification = (notification) => {
       this.setState({notification: notification});
+      
     };
+
+
+
   static navigationOptions = {
     title: 'Notifications',
   };

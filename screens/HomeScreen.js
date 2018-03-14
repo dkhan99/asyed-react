@@ -142,24 +142,24 @@ spin () {
           console.error("AsyncStorage error: " + error.message))
         .done();
         for (var salah in responseData.data.timings) {
-          console.log("salah as salah", salah)
+          // console.log("salah as salah", salah)
           
-          console.log(obj)
+          // console.log(obj)
           _getSalahValues = async (salah) => {
             this.props.navigation.state.update = false;
-          console.log(this.props.navigation.state.update);
+          // console.log(this.props.navigation.state.update);
           
             await AsyncStorage
                 .getItem(salah)
                 // .then(value => value == 'true')
                 .then(salahvalue => {
                   // Moved the notification scheduling here 
-                  console.log(salah, salahvalue)
+                  // console.log(salah, salahvalue)
                   if (salahvalue == "true") {
                     let d = new Date(responseData.data.date.readable + " "+ responseData.data.timings[salah])
                     datePrayer = d.getTime();
-                    console.log("the response datePrayer", salah, datePrayer);
-                    console.log("the response date", Date.now());
+                    // console.log("the response datePrayer", salah, datePrayer);
+                    // console.log("the response date", Date.now());
                     // console.log(responseData.data.date.readable , datePrayer, Date.now(), responseData.data.timings[salah]).getTime() )
                     if (datePrayer < Date.now()){
                       datePrayer += 86400000
@@ -179,7 +179,7 @@ spin () {
                           android:{sound:true, priority: 'max'}
                         };
                         Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions);
-                        console.log( salah, "notification set at ", responseData.data.timings[salah])
+                        // console.log( salah, "notification set at ", responseData.data.timings[salah])
                     
                   }
                 })
@@ -192,13 +192,13 @@ spin () {
             timings[salah] = stdTimeArr.join(':');
         }
 
-        console.log("the response data 1", responseData.data)
+        // console.log("the response data 1", responseData.data)
 
         this.setState({
           timings: timings,
         });
-        console.log("responsedata Timings in Homescreen", responseData.data.timings)
-        console.log("Timings in Homescreen", timings)
+        // console.log("responsedata Timings in Homescreen", responseData.data.timings)
+        // console.log("Timings in Homescreen", timings)
       })
       .done();
 

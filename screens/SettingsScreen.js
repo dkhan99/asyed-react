@@ -14,7 +14,86 @@ import {
   Switch,
 } from 'react-native';
 
-// Accordian for settings
+ let notifications = [
+  // notifications[0] is the morning supplications
+  [
+    {
+      "title":"Morning Supplications",
+      "body":"this is random number 1"
+    },
+    {
+      "title":"Morning Supplications",
+      "body":"this is random number 2"
+    },
+    {
+      "title":"Morning Supplications",
+      "body":"this is random number 3"
+    }
+    
+  ],
+  // notifications[1] is after sunrise
+  [
+    {
+      "title":"After Sunrise Supplications",
+      "body":"this is random number 1"
+    },
+    {
+      "title":"After Sunrise Supplications",
+      "body":"this is random number 2"
+    },
+    {
+      "title":"After Sunrise Supplications",
+      "body":"this is random number 3"
+    }
+  ],
+  // notifications[2] is before Dhuhr
+  [
+    {
+      "title":"Before Dhuhr Supplications",
+      "body":"this is random number 1"
+    },
+    {
+      "title":"Before Dhuhr Supplications",
+      "body":"this is random number 2"
+    },
+    {
+      "title":"Before Dhuhr Supplications",
+      "body":"this is random number 3"
+    }
+  ],
+  // notifications[3] is after Asr
+  [
+    {
+      "title":"after Asr Supplications",
+      "body":"this is random number 1"
+    },
+    {
+      "title":"after Asr Supplications",
+      "body":"this is random number 2"
+    },
+    {
+      "title":"after Asr Supplications",
+      "body":"this is random number 3"
+    }
+  ],
+  // notifications[4] is after Isha
+  [
+    {
+      "title":"After Isha Supplications",
+      "body":"this is random number 1"
+    },
+    {
+      "title":"After Isha Supplications",
+      "body":"this is random number 2"
+    },
+    {
+      "title":"After Isha Supplications",
+      "body":"this is random number 3"
+    }
+  ],
+
+]
+
 
 import * as Animatable from 'react-native-animatable';
 import Collapsible from 'react-native-collapsible';
@@ -35,17 +114,17 @@ export default class SettingsScreen extends React.Component {
 
     _toggleExpanded1 = () => {
     this.setState({ collapsed1: !this.state.collapsed1 });
-    }
+    };
     _toggleExpanded2 = () => {
     this.setState({ collapsed2: !this.state.collapsed2 });
-    }
+    };
 
     _sliderToggleExpanded = () => {
     this.setState({ collapsed: !this.state.collapsed });
-    }
+    };
     _setSection(section) {
     this.setState({ activeSection: section });
-    }
+    };
 
   _renderHeader(section, index, isActive, sections) {
     return (
@@ -87,15 +166,22 @@ export default class SettingsScreen extends React.Component {
       collapsed2: true,
       value: 5,
     };
-  }
+  };
 
-    change(value) {
-      this.setState(() => {
-        return {
-          value: parseFloat(value),
-        };
+
+  change(value) {
+    this.setState(() => {
+      return {
+        value: parseFloat(value),
+      };
+
     });
-  }
+  // for loop up to the value creating random notifications from the list above
+      console.log(notifications[0][Math.floor(Math.random()*3)])
+      console.log(notifications[0][Math.floor(Math.random()*3)])
+      console.log(notifications[0][Math.floor(Math.random()*3)])
+  };
+
 
   componentWillMount() {
     let prayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"]
@@ -116,7 +202,7 @@ export default class SettingsScreen extends React.Component {
 
     }
     
-  } 
+  }; 
 
 
   toggleSwitch1 = (value) => {
