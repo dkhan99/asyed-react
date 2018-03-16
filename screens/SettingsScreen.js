@@ -14,86 +14,6 @@ import {
   Switch,
 } from 'react-native';
 
- let notifications = [
-  // notifications[0] is the morning supplications
-  [
-    {
-      "title":"Morning Supplications",
-      "body":"this is random number 1"
-    },
-    {
-      "title":"Morning Supplications",
-      "body":"this is random number 2"
-    },
-    {
-      "title":"Morning Supplications",
-      "body":"this is random number 3"
-    }
-    
-  ],
-  // notifications[1] is after sunrise
-  [
-    {
-      "title":"After Sunrise Supplications",
-      "body":"this is random number 1"
-    },
-    {
-      "title":"After Sunrise Supplications",
-      "body":"this is random number 2"
-    },
-    {
-      "title":"After Sunrise Supplications",
-      "body":"this is random number 3"
-    }
-  ],
-  // notifications[2] is before Dhuhr
-  [
-    {
-      "title":"Before Dhuhr Supplications",
-      "body":"this is random number 1"
-    },
-    {
-      "title":"Before Dhuhr Supplications",
-      "body":"this is random number 2"
-    },
-    {
-      "title":"Before Dhuhr Supplications",
-      "body":"this is random number 3"
-    }
-  ],
-  // notifications[3] is after Asr
-  [
-    {
-      "title":"after Asr Supplications",
-      "body":"this is random number 1"
-    },
-    {
-      "title":"after Asr Supplications",
-      "body":"this is random number 2"
-    },
-    {
-      "title":"after Asr Supplications",
-      "body":"this is random number 3"
-    }
-  ],
-  // notifications[4] is after Isha
-  [
-    {
-      "title":"After Isha Supplications",
-      "body":"this is random number 1"
-    },
-    {
-      "title":"After Isha Supplications",
-      "body":"this is random number 2"
-    },
-    {
-      "title":"After Isha Supplications",
-      "body":"this is random number 3"
-    }
-  ],
-
-]
-
 
 import * as Animatable from 'react-native-animatable';
 import Collapsible from 'react-native-collapsible';
@@ -104,6 +24,8 @@ import Accordion from 'react-native-collapsible/Accordion';
 
 
 import SwitchExample from "./switch";
+
+let notificationsArray = require("./notifications.json")
 
 
 
@@ -176,10 +98,17 @@ export default class SettingsScreen extends React.Component {
       };
 
     });
+
   // for loop up to the value creating random notifications from the list above
-      console.log(notifications[0][Math.floor(Math.random()*3)])
-      console.log(notifications[0][Math.floor(Math.random()*3)])
-      console.log(notifications[0][Math.floor(Math.random()*3)])
+      console.log(notificationsArray[0][Math.floor(Math.random()*4)])
+      console.log(notificationsArray[0][Math.floor(Math.random()*4)])
+      console.log(notificationsArray[0][Math.floor(Math.random()*4)])
+
+
+      for (var i = 0; i < value; i++) {
+        
+        console.log(notificationsArray[i][Math.floor(Math.random()*4)])
+      }
   };
 
 

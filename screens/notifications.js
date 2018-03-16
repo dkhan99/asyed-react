@@ -1,36 +1,41 @@
 
-let noti1 = [
-    {
-      "title":"Morning Supplications",
-      "body":"this is random number 1"
-    },
-    {
-      "title":"Morning Supplications",
-      "body":"this is random number 2"
-    },
-    {
-      "title":"Morning Supplications",
-      "body":"this is random number 3"
-    }
-]
-let noti2 = [
-    {
-      "title":"After Sunrise Supplications",
-      "body":"this is random number 1"
-    },
-    {
-      "title":"After Sunrise Supplications",
-      "body":"this is random number 2"
-    },
-    {
-      "title":"After Sunrise Supplications",
-      "body":"this is random number 3"
-    }
-]
+// let noti1 = [
+//     {
+//       "title":"Morning Supplications",
+//       "body":"this is random number 1"
+//     },
+//     {
+//       "title":"Morning Supplications",
+//       "body":"this is random number 2"
+//     },
+//     {
+//       "title":"Morning Supplications",
+//       "body":"this is random number 3"
+//     }
+// ]
+// let noti2 = [
+//     {
+//       "title":"After Sunrise Supplications",
+//       "body":"this is random number 1"
+//     },
+//     {
+//       "title":"After Sunrise Supplications",
+//       "body":"this is random number 2"
+//     },
+//     {
+//       "title":"After Sunrise Supplications",
+//       "body":"this is random number 3"
+//     }
+// ]
 
 // or ------------------
 
-let notifications = [
+
+
+// let notifications = 
+[
+
+
   // notifications[0] is the morning supplications
   [
     {
