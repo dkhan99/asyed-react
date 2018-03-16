@@ -14,7 +14,6 @@ import {
   Switch,
 } from 'react-native';
 
-// Accordian for settings
 
 import * as Animatable from 'react-native-animatable';
 import Collapsible from 'react-native-collapsible';
@@ -26,6 +25,8 @@ import Accordion from 'react-native-collapsible/Accordion';
 
 import SwitchExample from "./switch";
 
+let notificationsArray = require("./notifications.json")
+
 
 
 export default class SettingsScreen extends React.Component {
@@ -33,16 +34,19 @@ export default class SettingsScreen extends React.Component {
     title: 'Settings',
   };
 
-    _toggleExpanded = () => {
-    this.setState({ collapsed: !this.state.collapsed });
-    }
+    _toggleExpanded1 = () => {
+    this.setState({ collapsed1: !this.state.collapsed1 });
+    };
+    _toggleExpanded2 = () => {
+    this.setState({ collapsed2: !this.state.collapsed2 });
+    };
 
     _sliderToggleExpanded = () => {
     this.setState({ collapsed: !this.state.collapsed });
-    }
+    };
     _setSection(section) {
     this.setState({ activeSection: section });
-    }
+    };
 
   _renderHeader(section, index, isActive, sections) {
     return (
@@ -80,18 +84,33 @@ export default class SettingsScreen extends React.Component {
     	Maghrib: true,
     	Isha: true,
       activeSection: false,
-      collapsed: true,
-      value: 50,
+      collapsed1: true,
+      collapsed2: true,
+      value: 5,
     };
-  }
+  };
 
-    change(value) {
+
+  change(value) {
     this.setState(() => {
       return {
         value: parseFloat(value),
       };
+
     });
-  }
+
+  // for loop up to the value creating random notifications from the list above
+      console.log(notificationsArray[0][Math.floor(Math.random()*4)])
+      console.log(notificationsArray[0][Math.floor(Math.random()*4)])
+      console.log(notificationsArray[0][Math.floor(Math.random()*4)])
+
+
+      for (var i = 0; i < value; i++) {
+        
+        console.log(notificationsArray[i][Math.floor(Math.random()*4)])
+      }
+  };
+
 
   componentWillMount() {
     let prayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"]
@@ -112,7 +131,7 @@ export default class SettingsScreen extends React.Component {
 
     }
     
-  } 
+  }; 
 
 
   toggleSwitch1 = (value) => {
@@ -184,12 +203,12 @@ export default class SettingsScreen extends React.Component {
     return (
 
      	<View style={styles.container}>
-        <TouchableHighlight onPress={this._toggleExpanded}>
+        <TouchableHighlight onPress={this._toggleExpanded1}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>Select Prayer Time Notifications</Text>
+            <Text style={styles.headerText}>Select Prayer Notifications</Text>
           </View>
         </TouchableHighlight>
-        <Collapsible collapsed={this.state.collapsed} align="center">
+        <Collapsible collapsed={this.state.collapsed1} align="center">
           <View style={styles.content}>
             <SwitchExample
               toggleSwitch1 = {this.toggleSwitch1}
@@ -198,48 +217,33 @@ export default class SettingsScreen extends React.Component {
               toggleSwitch4 = {this.toggleSwitch4}
               toggleSwitch5 = {this.toggleSwitch5}
               switch1Value = {this.state.Fajr}
-              switch2Value = {this.state.Duhr}
+              switch2Value = {this.state.Dhuhr}
               switch3Value = {this.state.Asr}
               switch4Value = {this.state.Maghrib}
               switch5Value = {this.state.Isha}/>
           </View>
         </Collapsible>
-        <TouchableHighlight onPress={this._sliderToggleExpanded}>
+        <TouchableHighlight onPress={this._toggleExpanded2}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>Slide Away...</Text>
+            <Text style={styles.headerText}>Select other Notifications</Text>
           </View>
         </TouchableHighlight>
-        <Collapsible collapsed={this.state.collapsed} align="center">
+        <Collapsible collapsed={this.state.collapsed2} align="center">
           <View style={styles.header}>
             <Text style={styles.headerText}>{String(value)}</Text>
             <Slider
               step={1}
-              maximumValue={100}
+              maximumValue={5}
               onValueChange={this.change.bind(this)}
               value={value}
             />
+            <Text style={styles.title}>Notifications per Day</Text>
           </View>
         </Collapsible>
 
       </View>
 
-     	  <View>
-    	      <Text>
-    	        Toggle Prayers time notifications
-    	      </Text>
-    	      <SwitchExample
-    	         toggleSwitch1 = {this.toggleSwitch1}
-               toggleSwitch2 = {this.toggleSwitch2}
-               toggleSwitch3 = {this.toggleSwitch3}
-               toggleSwitch4 = {this.toggleSwitch4}
-               toggleSwitch5 = {this.toggleSwitch5}
-               switch1Value = {this.state.Fajr}
-               switch2Value = {this.state.Dhuhr}
-               switch3Value = {this.state.Asr}
-               switch4Value = {this.state.Maghrib}
-               switch5Value = {this.state.Isha}/>
-
-   	      </View>
+     	  
 
    	)
   }
