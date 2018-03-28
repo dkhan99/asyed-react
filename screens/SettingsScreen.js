@@ -86,29 +86,8 @@ export default class SettingsScreen extends React.Component {
       activeSection: false,
       collapsed1: true,
       collapsed2: true,
-      value: 5,
+      value: 0,
     };
-  };
-
-
-  change(value) {
-    this.setState(() => {
-      return {
-        value: parseFloat(value),
-      };
-
-    });
-
-  // for loop up to the value creating random notifications from the list above
-      console.log(notificationsArray[0][Math.floor(Math.random()*4)])
-      console.log(notificationsArray[0][Math.floor(Math.random()*4)])
-      console.log(notificationsArray[0][Math.floor(Math.random()*4)])
-
-
-      for (var i = 0; i < value; i++) {
-        
-        console.log(notificationsArray[i][Math.floor(Math.random()*4)])
-      }
   };
 
 
@@ -130,8 +109,46 @@ export default class SettingsScreen extends React.Component {
       .done();
 
     }
-    
+    AsyncStorage
+      .getItem("sliderVal")
+      .then(sliderVal => {
+        if (sliderVal !== null) {
+          this.setState(() => {
+            return {
+              value: parseFloat(sliderVal),
+            };
+          })
+        }
+      })
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done();
   }; 
+
+  change(value) {
+    this.setState(() => {
+      return {
+        value: parseFloat(value),
+      };
+
+    });
+    AsyncStorage
+      .setItem( "sliderVal", value.toString() )
+      .then(() => console.log("Saved selection to disk: " + value))
+      .catch(error =>
+        console.error("AsyncStorage error: " + error.message))
+      .done();
+
+  // for loop up to the value creating random notifications from the list above
+      for (var i = 0; i < value; i++) {
+        
+        // add scheduled notifications here
+        console.log(notificationsArray[i][Math.floor(Math.random()*3)]) // x3 because there are 3 possible notfications for each time of day
+        
+
+      }
+  };
+
 
 
   toggleSwitch1 = (value) => {

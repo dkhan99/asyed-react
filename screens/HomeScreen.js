@@ -126,10 +126,11 @@ spin () {
       .then((response) => response.json())
       .then((responseData) => {
         // (hours + 11)%12 +1   to convert 24 hr to 12 hr
-        // responseData.data.timings["Fajr"] = "4:19 pm";  // Test notification timing
-        // responseData.data.timings["Dhuhr"] = "9:26 pm";  // Test notification timing
-        // responseData.data.timings["Asr"] = "9:26 pm";  // Test notification timing
-        Notifications.cancelAllScheduledNotificationsAsync();
+        // responseData.data.timings["Fajr"] = "8:45 am";  // Test notification timing
+        // responseData.data.timings["Dhuhr"] = "8:45 am";  // Test notification timing
+        // responseData.data.timings["Asr"] = "8:45 am";  // Test notification timing
+        
+        // Notifications.cancelAllScheduledNotificationsAsync();
 
 
         // Aync Storage isn't working within the for loop try doing the async calls before or check the settings screen
@@ -142,12 +143,21 @@ spin () {
           console.error("AsyncStorage error: " + error.message))
         .done();
         for (var salah in responseData.data.timings) {
-          // console.log("salah as salah", salah)
-          
-          // console.log(obj)
+            
+
+
           _getSalahValues = async (salah) => {
             this.props.navigation.state.update = false;
-          // console.log(this.props.navigation.state.update);
+
+          // remove existing salah scheduled notifications
+            await AsyncStorage
+                .getItem(salah+"_noti_id")
+                .then(localNotificationId => {
+                  if(localNotificationId){
+                    console.log(salah, localNotificationId);
+                    Expo.Notifications.cancelScheduledNotificationAsync(parseInt(localNotificationId))
+                  }
+                }).done();
           
             await AsyncStorage
                 .getItem(salah)
@@ -178,18 +188,30 @@ spin () {
                           ios:{sound:true},
                           android:{sound:true, priority: 'max'}
                         };
-                        Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions);
-                        // console.log( salah, "notification set at ", responseData.data.timings[salah])
-                    
+                        Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions)
+                        .then(res => {
+                          console.log("response after notification is set", res);
+                          AsyncStorage
+                          .setItem( salah + "_noti_id", res.toString() )
+                          .then(() => console.log("Saved selection to disk: " + res))
+                          .catch(error =>
+                            console.error("AsyncStorage error: " + error.message))
+                          .done()
+                          console.log( salah, "notification set at ", responseData.data.timings[salah])
+                        });
+                        
+                        
                   }
                 })
                 .done()
           }
           _getSalahValues(salah)
+
             let stdTime = String((Number(responseData.data.timings[salah].split(':')[0])+ 11) %12 +1);
             let stdTimeArr = responseData.data.timings[salah].split(':');
             stdTimeArr[0] = stdTime;
             timings[salah] = stdTimeArr.join(':');
+
         }
 
         // console.log("the response data 1", responseData.data)
