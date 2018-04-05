@@ -139,12 +139,41 @@ export default class SettingsScreen extends React.Component {
         console.error("AsyncStorage error: " + error.message))
       .done();
 
+
+  // need to make an array of notigication times to schedule it
+      let time = [fajr-1000, dhuhr-2000, asr-3000, maghrib+2000, isha+2000]
+
   // for loop up to the value creating random notifications from the list above
       for (var i = 0; i < value; i++) {
         
         // add scheduled notifications here
         console.log(notificationsArray[i][Math.floor(Math.random()*3)]) // x3 because there are 3 possible notfications for each time of day
         
+        let schedulingOptions = {
+          time: time[i], 
+          // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
+          // time: 1513120980000, // (date or number) — A Date object representing when to fire the notification or a number in Unix epoch time. Example: (new Date()).getTime() + 1000 is one second from now.
+          // repeat: "day"
+        };
+
+        let localNotification = {
+          title: notificationsArray[i][Math.floor(Math.random()*3)].title, 
+          body: notificationsArray[i][Math.floor(Math.random()*3)].body,
+          // sound: "./adhanMakkah.wav",
+          ios:{sound:true},
+          android:{sound:true, priority: 'max'}
+        };
+        Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions)
+        .then(res => {
+          console.log("response after notification is set", res);
+          AsyncStorage
+          .setItem( salah + "_noti_id", res.toString() )
+          .then(() => console.log("Saved selection to disk: " + res))
+          .catch(error =>
+            console.error("AsyncStorage error: " + error.message))
+          .done()
+          console.log( salah, "notification set at ", responseData.data.timings[salah])
+        });
 
       }
   };
